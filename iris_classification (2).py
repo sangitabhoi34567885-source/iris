@@ -1,10 +1,3 @@
-"""
-CodSoft Data Science Internship - Task 3
-Iris Flower Classification
-
-Goal: Train a model to classify Iris flowers into setosa, versicolor,
-or virginica based on sepal and petal measurements.
-"""
 
 import pandas as pd
 import numpy as np
@@ -21,14 +14,7 @@ from sklearn.metrics import (
     accuracy_score, classification_report, confusion_matrix
 )
 
-# -----------------------------
-# 1. Load the dataset
-# -----------------------------
-# Option A: load from a local CSV (download from the Kaggle link in the task
-# and place it in the same folder as this script)
-# df = pd.read_csv("IRIS.csv")
 
-# Option B: use scikit-learn's built-in copy of the dataset (no download needed)
 from sklearn.datasets import load_iris
 
 iris_raw = load_iris()
@@ -46,9 +32,7 @@ print("\nMissing values:\n", df.isnull().sum())
 print("\nSpecies distribution:\n", df["species"].value_counts())
 print("\nSummary statistics:\n", df.describe())
 
-# -----------------------------
-# 2. Exploratory Data Analysis
-# -----------------------------
+
 sns.pairplot(df, hue="species", diag_kind="hist")
 plt.suptitle("Pairwise Feature Relationships by Species", y=1.02)
 plt.savefig("pairplot.png", dpi=150, bbox_inches="tight")
@@ -62,9 +46,6 @@ plt.close()
 
 print("\nSaved pairplot.png and correlation_heatmap.png")
 
-# -----------------------------
-# 3. Prepare data for modeling
-# -----------------------------
 X = df.drop(columns="species")
 y = df["species"]
 
@@ -79,9 +60,6 @@ scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# -----------------------------
-# 4. Train multiple models and compare
-# -----------------------------
 models = {
     "Logistic Regression": LogisticRegression(max_iter=200),
     "Decision Tree": DecisionTreeClassifier(random_state=42),
@@ -100,16 +78,10 @@ for name, model in models.items():
     print(f"Accuracy: {acc:.4f}")
     print(classification_report(y_test, preds, target_names=le.classes_))
 
-# -----------------------------
-# 5. Pick the best model
-# -----------------------------
 best_model_name = max(results, key=results.get)
 best_model = models[best_model_name]
 print(f"\nBest model: {best_model_name} (Accuracy: {results[best_model_name]:.4f})")
 
-# -----------------------------
-# 6. Confusion matrix for the best model
-# -----------------------------
 best_preds = best_model.predict(X_test_scaled)
 cm = confusion_matrix(y_test, best_preds)
 
@@ -124,9 +96,6 @@ plt.close()
 
 print("Saved confusion_matrix.png")
 
-# -----------------------------
-# 7. Feature importance (Random Forest only)
-# -----------------------------
 if best_model_name == "Random Forest":
     importances = pd.Series(best_model.feature_importances_, index=X.columns)
     importances = importances.sort_values(ascending=False)
@@ -142,9 +111,6 @@ if best_model_name == "Random Forest":
     print("\nFeature Importances:\n", importances)
     print("Saved feature_importance.png")
 
-# -----------------------------
-# 8. Predict on a new sample
-# -----------------------------
 sample = np.array([[5.1, 3.5, 1.4, 0.2]])  # example measurements
 sample_scaled = scaler.transform(sample)
 sample_pred = best_model.predict(sample_scaled)
